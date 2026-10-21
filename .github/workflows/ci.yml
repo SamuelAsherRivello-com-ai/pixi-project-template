@@ -1,0 +1,79 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: PixiJS
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: PixiJS/package-lock.json
+      - run: npm ci --ignore-scripts --legacy-peer-deps
+      - run: npm run client-build
+      - run: npm run test -- --runInBand
+      - name: Capture full dependency audit
+        if: always()
+        shell: bash
+        run: |
+          set +e
+          npm audit --package-lock-only --json > audit-full.json 2>&1
+          echo $? > audit-full.exit
+      - name: Capture production dependency audit
+        if: always()
+        shell: bash
+        run: |
+          set +e
+          npm audit --package-lock-only --omit=dev --omit=optional --json > audit-production.json 2>&1
+          echo $? > audit-production.exit
+      - name: Summarize dependency audits
+        if: always()
+        shell: bash
+        run: |
+          node <<'NODE' > audit-summary.txt
+          const fs = require('fs');
+          for (const file of ['audit-full.json', 'audit-production.json']) {
+            const raw = fs.readFileSync(file, 'utf8');
+            try {
+              const report = JSON.parse(raw);
+              const vulnerabilities = report.vulnerabilities || {};
+              const counts = Object.values(vulnerabilities).reduce((out, item) => {
+                out[item.severity] = (out[item.severity] || 0) + 1;
+                return out;
+              }, {});
+              console.log(`${file}: ${JSON.stringify(counts)}`);
+              for (const [name, item] of Object.entries(vulnerabilities)) {
+                const via = (item.via || []).map(entry => typeof entry === 'string' ? entry : `${entry.title || 'advisory'} ${entry.url || ''}`).join('; ');
+                console.log(`${name} severity=${item.severity} direct=${item.isDirect} dev=${item.isDev} via=${via}`);
+              }
+            } catch {
+              console.log(`${file}: audit did not return JSON; inspect the captured output for registry/network errors.`);
+              console.log(raw);
+            }
+          }
+          NODE
+          cat audit-summary.txt
+      - name: Upload dependency audit reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: npm-audit-reports
+          path: |
+            PixiJS/audit-full.json
+            PixiJS/audit-full.exit
+            PixiJS/audit-production.json
+            PixiJS/audit-production.exit
+            PixiJS/audit-summary.txt
+          if-no-files-found: warn

@@ -49,10 +49,10 @@
     "@typescript-eslint/eslint-plugin": "^8.56.0",
     "@typescript-eslint/parser": "^8.56.0",
     "clean-webpack-plugin": "^4.0.0",
-    "compression-webpack-plugin": "^11.1.0",
+    "compression-webpack-plugin": "^12.0.0",
     "concurrently": "^9.2.1",
-    "copy-webpack-plugin": "^13.0.1",
-    "css-loader": "^7.1.4",
+    "copy-webpack-plugin": "^14.0.0",
+    "css-loader": "^7.1.5",
     "eslint": "^10.0.1",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-prettier": "^10.1.8",
@@ -80,5 +80,15 @@
     "webpack": "^5.105.2",
     "webpack-cli": "^6.0.1",
     "webpack-dev-server": "^5.2.3"
+  },
+  "overrides": {
+    "argparse": "2.0.1",
+    "postcss-selector-parser": "7.1.6",
+    "webpack-dev-server": {
+      "qs": "^6.16.0"
+    },
+    "sockjs": {
+      "uuid": "^11.1.1"
+    }
   }
 }
