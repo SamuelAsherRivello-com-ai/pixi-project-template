@@ -28,6 +28,8 @@ This repo includes a great starting point for new [PixiJS](https://pixijs.com/) 
 1. Browse to [SamuelAsherRivello.github.io/pixi-project-template/dist/index.html](https://samuelasherrivello.github.io/pixi-project-template/dist/index.html)
 2. Enjoy!
 
+Live Demo (GitHub Pages): [samuelasherrivello-com-ai.github.io/pixi-project-template](https://samuelasherrivello-com-ai.github.io/pixi-project-template/). Run the `Release Live Demo` workflow to publish it.
+
 ### Build Project
 
 1. Download this repo (*.zip or *.git)
