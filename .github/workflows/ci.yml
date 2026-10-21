@@ -21,6 +21,6 @@ jobs:
           node-version: 22
           cache: npm
           cache-dependency-path: PixiJS/package-lock.json
-      - run: npm ci --ignore-scripts
+      - run: npm ci --ignore-scripts --legacy-peer-deps
       - run: npm run client-build
       - run: npm run test -- --runInBand
