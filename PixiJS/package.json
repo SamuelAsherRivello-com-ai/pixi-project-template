@@ -84,6 +84,9 @@
   "overrides": {
     "argparse": "2.0.1",
     "postcss-selector-parser": "7.1.6",
+    "webpack-dev-server": {
+      "qs": "^6.16.0"
+    },
     "sockjs": {
       "uuid": "^11.1.1"
     }
